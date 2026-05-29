@@ -1,0 +1,264 @@
+{
+    "timestamp": "2026-05-29T13:07:14+00:00",
+    "sucesso_geral": true,
+    "total_assercoes": 25,
+    "passed_assercoes": 25,
+    "failed_assercoes": 0,
+    "qualidade": {
+        "linter": {
+            "title": "Linter de Sintaxe PHP",
+            "passed": true,
+            "total_checked": 33,
+            "passed_count": 33,
+            "failed_files": []
+        },
+        "security": {
+            "title": "Varredura de Segurança e Controles de Entrada",
+            "passed": true,
+            "checks": {
+                "upload_security": {
+                    "name": "Segurança de Upload de Arquivos (Prevenção de RCE)",
+                    "passed": true,
+                    "details": {
+                        "valida_mime_real_finfo": true,
+                        "valida_limite_tamanho_5mb": true,
+                        "whitelist_extensoes_seguras": true
+                    }
+                },
+                "sql_injection_prevention": {
+                    "name": "Prevenção de SQL Injection (PDO Prepared Statements)",
+                    "passed": true,
+                    "details": {
+                        "vulnerabilidades_detectadas": [],
+                        "mensagem": "Todos os modelos utilizam PDO prepare e bindParam/execute corretamente."
+                    }
+                },
+                "authentication_middleware": {
+                    "name": "Middleware de Autenticação e Controle de Sessão",
+                    "passed": true,
+                    "details": {
+                        "inicia_sessao": true,
+                        "possui_middleware_permissao": true,
+                        "aplica_middleware_rotas": true
+                    }
+                }
+            }
+        },
+        "html_semantics": {
+            "title": "Semântica HTML e IDs de Teste Unificados",
+            "passed": true,
+            "details": {
+                "index.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "main"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 3
+                },
+                "dashboard.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 8
+                },
+                "documentos.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 10
+                },
+                "equipes.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 15
+                },
+                "etapas.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 17
+                },
+                "financeiro.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 18
+                },
+                "funcionarios.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 24
+                },
+                "funcoes.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 17
+                },
+                "materiais.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 15
+                },
+                "notificacoes.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 7
+                },
+                "obras.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 19
+                },
+                "relatorios.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 22
+                },
+                "usuarios.html": {
+                    "passed": true,
+                    "elementos_semanticos": [
+                        "nav"
+                    ],
+                    "ids_duplicados": [],
+                    "controles_sem_id": 12
+                }
+            }
+        }
+    },
+    "logica": {
+        "title": "Testes de Lógica de Negócios (In-Memory Mock Engine)",
+        "passed": true,
+        "tests": [
+            {
+                "name": "Permissão Admin: Acesso total a Usuários",
+                "passed": true,
+                "message": "Administrador deve ter acesso ao recurso de gerenciamento de usuários."
+            },
+            {
+                "name": "Permissão RH: Bloqueio absoluto a Usuários",
+                "passed": true,
+                "message": "RH não deve gerenciar usuários."
+            },
+            {
+                "name": "Permissão RH: Acesso a Funcionários",
+                "passed": true,
+                "message": "RH deve ter acesso ao cadastro de funcionários."
+            },
+            {
+                "name": "Permissão Almoxarifado: Bloqueio a Obras",
+                "passed": true,
+                "message": "Almoxarifado não deve criar nem alterar obras."
+            },
+            {
+                "name": "Permissão Almoxarifado: Acesso a Materiais",
+                "passed": true,
+                "message": "Almoxarifado deve gerenciar materiais e estoque."
+            },
+            {
+                "name": "Permissão Visualização: Bloqueio de Escrita",
+                "passed": true,
+                "message": "Perfil Visualização não tem direito de criar registros no banco."
+            },
+            {
+                "name": "Permissão Visualização: Leitura via GET permitida",
+                "passed": true,
+                "message": "Perfil Visualização tem leitura livre via requisições GET."
+            },
+            {
+                "name": "Estoque Material: Registrar Entrada",
+                "passed": true,
+                "message": "Entrada de material válida deve ser registrada."
+            },
+            {
+                "name": "Estoque Material: Impedir Saída Acima do Saldo",
+                "passed": true,
+                "message": "Saída de 12 sacos com saldo de 10 deve ser rejeitada."
+            },
+            {
+                "name": "Estoque Material: Permitir Saída Adequada",
+                "passed": true,
+                "message": "Saída de 7 sacos com saldo de 10 deve ser aceita e gravada."
+            },
+            {
+                "name": "Etapas Progresso: Status Concluída força Percentual a 100%",
+                "passed": true,
+                "message": "Status concluído força o percentual para 100% automaticamente."
+            },
+            {
+                "name": "Etapas Progresso: Percentual 100% força Status Concluída",
+                "passed": true,
+                "message": "Percentual em 100% altera o status da etapa para Concluída automaticamente."
+            },
+            {
+                "name": "Obra Cascata: Cálculo Médio dos Percentuais",
+                "passed": true,
+                "message": "Progresso da Obra deve calcular 80.00% (média de 100, 100 e 40)."
+            },
+            {
+                "name": "Obra Cascata: Status atualiza para Em andamento",
+                "passed": true,
+                "message": "O status da Obra deve atualizar para \"Em andamento\" automaticamente."
+            },
+            {
+                "name": "RH Funcionários: Contratar Trabalhador",
+                "passed": true,
+                "message": "Registro de contratação realizado."
+            },
+            {
+                "name": "RH Funcionários: Confirmar Desligamento",
+                "passed": true,
+                "message": "Alteração cadastral de desligamento efetuada."
+            },
+            {
+                "name": "RH Funcionários: Integridade de Dados de Demissão",
+                "passed": true,
+                "message": "Status \"demitido\", data e motivo devem ser gravados em conformidade."
+            },
+            {
+                "name": "Segurança de Senhas: Criar Usuário",
+                "passed": true,
+                "message": "Usuário gravado com sucesso."
+            },
+            {
+                "name": "Segurança de Senhas: Criptografia ativa via Bcrypt",
+                "passed": true,
+                "message": "Senha salva deve ser um hash Bcrypt válido (inicia com $2y$)."
+            },
+            {
+                "name": "Segurança de Senhas: Validação correta da Senha Criptografada",
+                "passed": true,
+                "message": "A senha criptografada deve ser verificável com password_verify."
+            }
+        ]
+    }
+}

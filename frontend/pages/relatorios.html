@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Caba Desenrolado ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        #printTimbradoRh {
+            display: none;
+        }
+        @media print {
+            .sidebar, .btn, .no-print, .theme-toggle-btn, .card, [vw], [vw-access-button], .vw-plugin-wrapper, iframe {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            .table-responsive {
+                border: none !important;
+                box-shadow: none !important;
+                display: none !important;
+            }
+            #printTimbradoRh {
+                display: block !important;
+                font-family: 'Times New Roman', Times, serif;
+                color: #000;
+            }
+            body {
+                background: #fff !important;
+                color: #000 !important;
+            }
+        }
+        .timbrado-header {
+            border-bottom: 2px solid #002d62;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .timbrado-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #002d62;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .timbrado-meta {
+            font-size: 12px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .timbrado-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .timbrado-table th {
+            background-color: #002d62 !important;
+            color: #fff !important;
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .timbrado-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            font-size: 11px;
+        }
+        .timbrado-signature {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #aaa;
+            width: 300px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="bi bi-building-gear text-primary"></i> Caba Desenrolado ERP</h4>
+            
+        </div>
+        <ul class="list-unstyled components">
+            <li class=""><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li data-access="Engenharia" class=""><a href="obras.html"><i class="bi bi-building"></i> Obras</a></li>
+            <li data-access="Engenharia" class=""><a href="etapas.html"><i class="bi bi-list-task"></i> Etapas</a></li>
+            <li data-access="Financeiro" class=""><a href="financeiro.html"><i class="bi bi-cash-coin"></i> Financeiro</a></li>
+            <li data-access="Almoxarifado" class=""><a href="materiais.html"><i class="bi bi-box-seam"></i> Materiais</a></li>
+            <li data-access="RH" class=""><a href="funcionarios.html"><i class="bi bi-people"></i> Funcionários</a></li>
+            <li data-access="RH" class=""><a href="funcoes.html"><i class="bi bi-briefcase"></i> Funções e Cargos</a></li>
+            <li data-access="Engenharia,RH" class=""><a href="equipes.html"><i class="bi bi-person-workspace"></i> Equipes</a></li>
+            <li data-access="Engenharia" class=""><a href="documentos.html"><i class="bi bi-file-earmark-text"></i> Documentos</a></li>
+            <li data-access="Financeiro,Almoxarifado,RH" class="active"><a href="relatorios.html"><i class="bi bi-graph-up"></i> Relatórios</a></li>
+            <li class="">
+                <a href="notificacoes.html" class="d-flex justify-content-between align-items-center w-100">
+                    <span><i class="bi bi-bell"></i> Notificações</span>
+                    <span id="sidebarNotifBadge" class="badge bg-danger ms-2 d-none sidebarNotifBadgePulse">0</span>
+                </a>
+            </li>
+            <li data-access="Administrador" class=""><a href="usuarios.html"><i class="bi bi-shield-lock"></i> Usuários</a></li>
+            <li><a href="#" onclick="auth.logout()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="theme-toggle-btn" onclick="auth.toggleTheme()" title="Alternar Tema (Claro/Escuro)"><i class="bi bi-brightness-high"></i></button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <button class="btn btn-secondary d-lg-none toggle-sidebar-btn" id="toggleSidebarBtn"><i class="bi bi-list"></i></button>
+                <i class="bi bi-graph-up text-primary d-none d-sm-inline-block"></i> Central de Relatórios
+            </h2>
+            <div class="d-flex gap-2">
+                <button class="btn btn-danger no-print" onclick="openAcidenteModal()" data-access="Administrador,Engenharia,RH"><i class="bi bi-shield-fill-exclamation"></i> Registrar Acidente</button>
+                <button class="btn btn-secondary no-print" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir / Salvar PDF</button>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card p-4 mb-4 no-print">
+            <form novalidate id="relatorioForm" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="relTipo" class="form-label required-label">Tipo de Relatório</label>
+                    <select class="form-select" id="relTipo" onchange="toggleRelatorioFields()">
+                        <option value="gastos">Gastos Financeiros (Despesas)</option>
+                        <option value="estoque">Estoque de Materiais</option>
+                        <option value="rh">Relatório de RH (Funcionários)</option>
+                        <option value="acidentes">Relatório de Acidentes de Trabalho</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="divObraId">
+                    <label for="relObraId" class="form-label">Filtrar por Obra</label>
+                    <select class="form-select" id="relObraId">
+                        <option value="">Todas as Obras</option>
+                        <!-- Dinâmico -->
+                    </select>
+                </div>
+                <div class="col-md-2" id="divDataInicio">
+                    <label for="relDataInicio" class="form-label">Venc. Inicial</label>
+                    <input type="date" class="form-control" id="relDataInicio">
+                </div>
+                <div class="col-md-2" id="divDataFim">
+                    <label for="relDataFim" class="form-label">Venc. Final</label>
+                    <input type="date" class="form-control" id="relDataFim">
+                </div>
+                <div class="col-md-4" id="divCategoria" style="display:none;">
+                    <label for="relCategoria" class="form-label">Categoria de Material</label>
+                    <select class="form-select" id="relCategoria">
+                        <option value="">Todas as Categorias</option>
+                        <option value="EPI">EPI</option>
+                        <option value="Ferramentas">Ferramentas</option>
+                        <option value="Material de Construção">Material de Construção</option>
+                        <option value="Elétrica">Elétrica</option>
+                        <option value="Hidráulica">Hidráulica</option>
+                        <option value="Escritório">Escritório</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+
+                <!-- Filtros específicos de RH (Incialmente Ocultos) -->
+                <div class="col-md-3" id="divRhStatus" style="display:none;">
+                    <label for="relRhStatus" class="form-label">Status</label>
+                    <select class="form-select" id="relRhStatus" onchange="toggleDismissalDateFields()">
+                        <option value="">Todos</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="afastado">Afastado</option>
+                        <option value="demitido">Demitido</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="divRhCargo" style="display:none;">
+                    <label for="relRhCargo" class="form-label">Cargo / Função</label>
+                    <select class="form-select" id="relRhCargo">
+                        <option value="">Todos</option>
+                        <!-- Dinâmico -->
+                    </select>
+                </div>
+                <div class="col-md-3" id="divRhEquipe" style="display:none;">
+                    <label for="relRhEquipe" class="form-label">Equipe</label>
+                    <select class="form-select" id="relRhEquipe">
+                        <option value="">Todas</option>
+                        <!-- Dinâmico -->
+                    </select>
+                </div>
+                <div class="col-md-3" id="divRhAdmissaoDe" style="display:none;">
+                    <label for="relRhAdmissaoDe" class="form-label">Admissão De</label>
+                    <input type="date" class="form-control" id="relRhAdmissaoDe">
+                </div>
+                <div class="col-md-3" id="divRhAdmissaoAte" style="display:none;">
+                    <label for="relRhAdmissaoAte" class="form-label">Admissão Até</label>
+                    <input type="date" class="form-control" id="relRhAdmissaoAte">
+                </div>
+                <div class="col-md-3" id="divRhDemissaoDe" style="display:none;">
+                    <label for="relRhDemissaoDe" class="form-label">Demissão De</label>
+                    <input type="date" class="form-control" id="relRhDemissaoDe">
+                </div>
+                <div class="col-md-3" id="divRhDemissaoAte" style="display:none;">
+                    <label for="relRhDemissaoAte" class="form-label">Demissão Até</label>
+                    <input type="date" class="form-control" id="relRhDemissaoAte">
+                </div>
+
+                <div class="col-12 text-end d-flex justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-secondary" onclick="limparFiltros()"><i class="bi bi-x-circle"></i> Limpar Filtros</button>
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-file-earmark-bar-graph"></i> Gerar</button>
+                </div>
+            </form>
+            <script>
+                function toggleRelatorioFields() {
+                    const tipo = document.getElementById('relTipo').value;
+                    if(tipo === 'gastos') {
+                        document.getElementById('divDataInicio').style.display = 'block';
+                        document.getElementById('divDataFim').style.display = 'block';
+                        document.getElementById('divCategoria').style.display = 'none';
+                    } else {
+                        document.getElementById('divDataInicio').style.display = 'none';
+                        document.getElementById('divDataFim').style.display = 'none';
+                        document.getElementById('divCategoria').style.display = 'block';
+                    }
+                }
+            </script>
+        </div>
+
+        <!-- Indicadores / Cards de Resumo de RH -->
+        <div class="row g-3 mb-4 d-none no-print" id="relatorioRhResumoCards">
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-start border-primary border-4">
+                    <small class="text-uppercase fw-bold text-muted small d-block">Listados</small>
+                    <h3 class="fw-bold my-1" id="resumoTotal">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-start border-success border-4">
+                    <small class="text-uppercase fw-bold text-muted small d-block">Ativos / Afastados</small>
+                    <h3 class="fw-bold my-1 text-success" id="resumoAtivos">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-start border-danger border-4">
+                    <small class="text-uppercase fw-bold text-muted small d-block">Demitidos</small>
+                    <h3 class="fw-bold my-1 text-danger" id="resumoDemitidos">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-start border-warning border-4">
+                    <small class="text-uppercase fw-bold text-muted small d-block">Folha Mensal (Base)</small>
+                    <h3 class="fw-bold my-1 text-dark" id="resumoFolha">R$ 0,00</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indicadores / Cards de Resumo de Acidentes -->
+        <div class="row g-3 mb-4 d-none no-print" id="relatorioAcidentesResumoCards">
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm border-start border-danger border-4">
+                    <small class="text-uppercase fw-bold text-muted small d-block">Total de Acidentes no Período</small>
+                    <h3 class="fw-bold my-1 text-danger" id="resumoAcidentesTotal">0</h3>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3 shadow-sm border-start border-success border-4">
+                    <small class="text-uppercase fw-bold text-muted small d-block">Maior Sequência de Dias sem Ocorrências</small>
+                    <h3 class="fw-bold my-1 text-success" id="resumoAcidentesMaxDias">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" id="relatorioTable">
+                <thead id="relatorioHead">
+                    <!-- Dinâmico -->
+                </thead>
+                <tbody id="relatorioBody">
+                    <tr>
+                        <td class="text-center text-muted py-4">Selecione o tipo de relatório e clique em "Gerar".</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Contêiner de Impressão Papel Timbrado (Invisível na tela por padrão) -->
+        <div id="printTimbradoRh">
+            <div class="timbrado-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="timbrado-title"><i class="bi bi-building text-primary"></i> ERP CONTROLE DE OBRAS</h2>
+                    <p class="text-muted m-0 small">Rua das Construções, 123 - Centro | Tel: (11) 5555-4444</p>
+                </div>
+                <div class="text-end">
+                    <h5 class="m-0 fw-bold" id="printTituloRelatorio">RELATÓRIO DE RECURSOS HUMANOS</h5>
+                    <small class="text-muted" id="printSubtituloRelatorio">Documento Geral de Funcionários</small>
+                </div>
+            </div>
+            
+            <div class="timbrado-meta row">
+                <div class="col-6">
+                    <strong>Filtros Aplicados:</strong>
+                    <div id="printFiltrosTexto" class="small text-muted">-</div>
+                </div>
+                <div class="col-6 text-end">
+                    <strong>Emissão:</strong>
+                    <div class="small text-muted">Data: <span id="printDataEmissao">-</span></div>
+                    <div class="small text-muted">Responsável: <span id="printEmissor">-</span></div>
+                </div>
+            </div>
+
+            <table class="timbrado-table">
+                <thead>
+                    <tr id="printTableHead">
+                        <th>Nome</th>
+                        <th>Cargo (Função)</th>
+                        <th>Equipe</th>
+                        <th>Status</th>
+                        <th>Admissão</th>
+                        <th>Demissão</th>
+                        <th>Salário Base (R$)</th>
+                        <th>Horário</th>
+                    </tr>
+                </thead>
+                <tbody id="printTableBody">
+                    <!-- Dinâmico -->
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between align-items-center mt-5">
+                <div class="timbrado-signature">
+                    <p class="m-0 small"><strong>Assinatura do Responsável</strong></p>
+                    <p class="m-0 text-muted small" id="printAssinaturaCargo">Gestor do Caba Desenrolado ERP</p>
+                </div>
+                <div class="text-end">
+                    <p class="m-0 small text-muted">Caba Desenrolado ERP &copy; 2026. Todos os direitos reservados.</p>
+                    <p class="m-0 small text-muted">Página 1 de 1</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Registro de Acidente -->
+<div class="modal fade" id="acidenteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Registrar Ocorrência de Acidente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="acidenteForm" class="row g-3">
+                    <div class="col-12">
+                        <label for="acidenteDescricao" class="form-label required-label fw-bold">Descrição Breve do Acidente</label>
+                        <textarea class="form-control" id="acidenteDescricao" rows="3" placeholder="Descreva brevemente o acidente, local, envolvidos..." required></textarea>
+                    </div>
+                    <div class="col-12 text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger px-4">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/relatorios.js"></script>
+<script>auth.checkAuth();</script>
+</body>
+</html>

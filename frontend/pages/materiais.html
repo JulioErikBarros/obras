@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materiais - Caba Desenrolado ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="bi bi-building-gear text-primary"></i> Caba Desenrolado ERP</h4>
+            
+        </div>
+        <ul class="list-unstyled components">
+            <li class=""><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li data-access="Engenharia" class=""><a href="obras.html"><i class="bi bi-building"></i> Obras</a></li>
+            <li data-access="Engenharia" class=""><a href="etapas.html"><i class="bi bi-list-task"></i> Etapas</a></li>
+            <li data-access="Financeiro" class=""><a href="financeiro.html"><i class="bi bi-cash-coin"></i> Financeiro</a></li>
+            <li data-access="Almoxarifado" class="active"><a href="materiais.html"><i class="bi bi-box-seam"></i> Materiais</a></li>
+            <li data-access="RH" class=""><a href="funcionarios.html"><i class="bi bi-people"></i> Funcionários</a></li>
+            <li data-access="RH" class=""><a href="funcoes.html"><i class="bi bi-briefcase"></i> Funções e Cargos</a></li>
+            <li data-access="Engenharia,RH" class=""><a href="equipes.html"><i class="bi bi-person-workspace"></i> Equipes</a></li>
+            <li data-access="Engenharia" class=""><a href="documentos.html"><i class="bi bi-file-earmark-text"></i> Documentos</a></li>
+                        <li data-access="Financeiro,Almoxarifado,RH" class=""><a href="relatorios.html"><i class="bi bi-graph-up"></i> Relatórios</a></li>
+            <li class="">
+                <a href="notificacoes.html" class="d-flex justify-content-between align-items-center w-100">
+                    <span><i class="bi bi-bell"></i> Notificações</span>
+                    <span id="sidebarNotifBadge" class="badge bg-danger ms-2 d-none sidebarNotifBadgePulse">0</span>
+                </a>
+            </li>
+            <li data-access="Administrador" class=""><a href="usuarios.html"><i class="bi bi-shield-lock"></i> Usuários</a></li>
+            <li><a href="#" onclick="auth.logout()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="theme-toggle-btn" onclick="auth.toggleTheme()" title="Alternar Tema (Claro/Escuro)"><i class="bi bi-brightness-high"></i></button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <button class="btn btn-secondary d-lg-none toggle-sidebar-btn" id="toggleSidebarBtn"><i class="bi bi-list"></i></button>
+                <i class="bi bi-box-seam text-primary d-none d-sm-inline-block"></i> Gestão de Materiais
+            </h2>
+            <button class="btn btn-primary" onclick="openMaterialModal()"><i class="bi bi-arrow-left-right"></i> Registrar Movimentação</button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card p-4 mb-4">
+            <form novalidate id="filtroMateriaisForm" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label for="filtroCategoria" class="form-label">Categoria</label>
+                    <select class="form-select" id="filtroCategoria">
+                        <option value="">Todas as Categorias</option>
+                        <option value="EPI">EPI</option>
+                        <option value="Ferramentas">Ferramentas</option>
+                        <option value="Material de Construção">Material de Construção</option>
+                        <option value="Elétrica">Elétrica</option>
+                        <option value="Hidráulica">Hidráulica</option>
+                        <option value="Escritório">Escritório</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="filtroNome" class="form-label">Buscar por Nome</label>
+                    <input type="text" class="form-control" id="filtroNome" placeholder="Digite o nome do material...">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Obra</th>
+                        <th>Material</th>
+                        <th>Quantidade</th>
+                        <th>Unidade</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="materiaisTableBody">
+                    <!-- Dinâmico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Material -->
+<div class="modal fade" id="materialModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-box-arrow-in-right text-primary"></i> Registrar Movimentação de Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate id="materialForm" class="row g-3">
+                    <div class="col-12">
+                        <label for="matObraId" class="form-label required-label">Obra Destino/Origem</label>
+                        <select class="form-select" id="matObraId" required>
+                            <!-- Dinâmico -->
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="matNome" class="form-label required-label">Nome do Material</label>
+                        <input type="text" class="form-control" id="matNome" required placeholder="Ex: Cimento CP-II">
+                    </div>
+                    <div class="col-12">
+                        <label for="matCategoria" class="form-label required-label">Categoria</label>
+                        <select class="form-select" id="matCategoria" required>
+                            <option value="EPI">EPI</option>
+                            <option value="Ferramentas">Ferramentas</option>
+                            <option value="Material de Construção">Material de Construção</option>
+                            <option value="Elétrica">Elétrica</option>
+                            <option value="Hidráulica">Hidráulica</option>
+                            <option value="Escritório">Escritório</option>
+                            <option value="Outros" selected>Outros</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="matQuantidade" class="form-label required-label">Quantidade</label>
+                        <input type="number" step="0.01" class="form-control" id="matQuantidade" required placeholder="0,00">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="matUnidade" class="form-label required-label">Unidade de Medida</label>
+                        <input type="text" class="form-control" id="matUnidade" placeholder="Ex: kg, un, sacos" required>
+                    </div>
+                    <div class="col-12">
+                        <label for="matTipo" class="form-label required-label">Tipo de Movimentação</label>
+                        <select class="form-select" id="matTipo" required>
+                            <option value="entrada">Entrada (Abastecimento de estoque)</option>
+                            <option value="saida">Saída (Consumo na obra)</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save"></i> Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/materiais.js"></script>
+<script>auth.checkAuth();</script>
+</body>
+</html>

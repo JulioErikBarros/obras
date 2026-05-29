@@ -1,0 +1,22 @@
+        <ul class="list-unstyled components">
+            <li class=""><a href="dashboard.html">Dashboard</a></li>
+            <li data-access="Engenharia" class=""><a href="obras.html">Obras</a></li>
+            <li data-access="Engenharia" class=""><a href="etapas.html">Etapas</a></li>
+            <li data-access="Financeiro" class=""><a href="financeiro.html">Financeiro</a></li>
+            <li data-access="Almoxarifado" class=""><a href="materiais.html">Materiais</a></li>
+            <li data-access="RH" class=""><a href="funcionarios.html">Funcionários</a></li>
+            <li data-access="RH" class=""><a href="funcoes.html">Funções e Cargos</a></li>
+            <li data-access="Engenharia,RH" class=""><a href="equipes.html">Equipes</a></li>
+            <li data-access="Engenharia" class=""><a href="documentos.html">Documentos</a></li>
+            <li data-access="Financeiro,Almoxarifado" class=""><a href="relatorios.html">Relatórios</a></li>
+            <li class=" d-flex justify-content-between align-items-center pr-3">
+                <a href="notificacoes.html" style="width: 100%;">Notificações <span id="sidebarNotifBadge" class="badge bg-danger ms-2 d-none">0</span></a>
+            </li>
+            <li data-access="Administrador" class="active"><a href="usuarios.html">Usuários</a></li>
+            <li><a href="#" onclick="auth.logout()">Sair</a></li>
+        </ul>
+        <div class="sidebar-footer p-3 position-absolute w-100" style="bottom: 0;">
+            <button class="btn btn-sm btn-outline-light w-100" onclick="auth.toggleTheme()" title="Alternar Tema">
+                🌓 Modo Claro/Escuro
+            </button>
+        </div>

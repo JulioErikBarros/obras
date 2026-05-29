@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro - Caba Desenrolado ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="bi bi-building-gear text-primary"></i> Caba Desenrolado ERP</h4>
+            
+        </div>
+        <ul class="list-unstyled components">
+            <li class=""><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li data-access="Engenharia" class=""><a href="obras.html"><i class="bi bi-building"></i> Obras</a></li>
+            <li data-access="Engenharia" class=""><a href="etapas.html"><i class="bi bi-list-task"></i> Etapas</a></li>
+            <li data-access="Financeiro" class="active"><a href="financeiro.html"><i class="bi bi-cash-coin"></i> Financeiro</a></li>
+            <li data-access="Almoxarifado" class=""><a href="materiais.html"><i class="bi bi-box-seam"></i> Materiais</a></li>
+            <li data-access="RH" class=""><a href="funcionarios.html"><i class="bi bi-people"></i> Funcionários</a></li>
+            <li data-access="RH" class=""><a href="funcoes.html"><i class="bi bi-briefcase"></i> Funções e Cargos</a></li>
+            <li data-access="Engenharia,RH" class=""><a href="equipes.html"><i class="bi bi-person-workspace"></i> Equipes</a></li>
+            <li data-access="Engenharia" class=""><a href="documentos.html"><i class="bi bi-file-earmark-text"></i> Documentos</a></li>
+                        <li data-access="Financeiro,Almoxarifado,RH" class=""><a href="relatorios.html"><i class="bi bi-graph-up"></i> Relatórios</a></li>
+            <li class="">
+                <a href="notificacoes.html" class="d-flex justify-content-between align-items-center w-100">
+                    <span><i class="bi bi-bell"></i> Notificações</span>
+                    <span id="sidebarNotifBadge" class="badge bg-danger ms-2 d-none sidebarNotifBadgePulse">0</span>
+                </a>
+            </li>
+            <li data-access="Administrador" class=""><a href="usuarios.html"><i class="bi bi-shield-lock"></i> Usuários</a></li>
+            <li><a href="#" onclick="auth.logout()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="theme-toggle-btn" onclick="auth.toggleTheme()" title="Alternar Tema (Claro/Escuro)"><i class="bi bi-brightness-high"></i></button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <button class="btn btn-secondary d-lg-none toggle-sidebar-btn" id="toggleSidebarBtn"><i class="bi bi-list"></i></button>
+                <i class="bi bi-cash-coin text-primary d-none d-sm-inline-block"></i> Gestão Financeira
+            </h2>
+            <button class="btn btn-primary" onclick="openFinanceiroModal()"><i class="bi bi-plus-lg"></i> Novo Registro</button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card p-4 mb-4">
+            <form novalidate id="filtroFinanceiroForm" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="filtroStatusFin" class="form-label">Status</label>
+                    <select class="form-select" id="filtroStatusFin">
+                        <option value="">Todos</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Pago">Pago</option>
+                        <option value="Recebido">Recebido</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filtroTipoFin" class="form-label">Tipo de Lançamento</label>
+                    <select class="form-select" id="filtroTipoFin">
+                        <option value="">Todos</option>
+                        <option value="orcamento">Orçamento (Receita)</option>
+                        <option value="despesa">Despesa</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <label for="filtroDataInicioFin" class="form-label">Data Início</label>
+                    <input type="date" class="form-control" id="filtroDataInicioFin">
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <label for="filtroDataFimFin" class="form-label">Data Fim</label>
+                    <input type="date" class="form-control" id="filtroDataFimFin">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Obra</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>Valor (R$)</th>
+                        <th>Status</th>
+                        <th>Vencimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="financeiroTableBody">
+                    <!-- Dinâmico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Financeiro -->
+<div class="modal fade" id="financeiroModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="financeiroModalTitle"><i class="bi bi-cash-stack text-primary"></i> Novo Lançamento Financeiro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate id="financeiroForm" class="row g-3">
+                    <input type="hidden" id="finId">
+                    <div class="col-12">
+                        <label for="finObraId" class="form-label required-label">Obra Associada</label>
+                        <select class="form-select" id="finObraId" required>
+                            <!-- Dinâmico -->
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="finTipo" class="form-label required-label">Tipo</label>
+                        <select class="form-select" id="finTipo" required>
+                            <option value="orcamento">Orçamento (Entrada/Receita)</option>
+                            <option value="despesa">Despesa (Saída)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="finStatus" class="form-label">Status</label>
+                        <select class="form-select" id="finStatus">
+                            <option>Pendente</option>
+                            <option>Pago</option>
+                            <option>Recebido</option>
+                            <option>Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="finDescricao" class="form-label required-label">Descrição / Categoria</label>
+                        <input type="text" class="form-control" id="finDescricao" required placeholder="Ex: Compra de Brita ou Aporte de Investidor">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="finValor" class="form-label required-label">Valor (R$)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <input type="number" step="0.01" class="form-control" id="finValor" required placeholder="0,00">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="finDataVencimento" class="form-label">Data de Vencimento</label>
+                        <input type="date" class="form-control" id="finDataVencimento">
+                    </div>
+                    <div class="col-12 text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save"></i> Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/financeiro.js"></script>
+<script>auth.checkAuth();</script>
+</body>
+</html>
