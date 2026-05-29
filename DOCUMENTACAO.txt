@@ -1,0 +1,186 @@
+================================================================================
+          DOCUMENTAÇÃO TÉCNICA DO SISTEMA: ERP CONTROLE DE OBRAS
+================================================================================
+
+Este documento descreve detalhadamente a arquitetura, estrutura de diretórios,
+modelagem de banco de dados, práticas de segurança e a suíte de testes do
+sistema ERP Controle de Obras.
+
+--------------------------------------------------------------------------------
+1. ARQUITETURA E TECNOLOGIAS UTILIZADAS
+--------------------------------------------------------------------------------
+
+O sistema é construído sob uma abordagem Vanilla (sem frameworks complexos ou
+pesados) para garantir portabilidade máxima, desempenho e facilidade de
+manutenção.
+
+- Frontend:
+  * HTML5 Semântico para acessibilidade e estruturação.
+  * CSS3 Customizado + Bootstrap 5 (via CDN) para design responsivo e fluidez.
+  * JavaScript Vanilla (ES6+) para controle lógico e chamadas assíncronas (Fetch API).
+  
+- Backend:
+  * PHP 8.0+ Puro (Vanilla PHP).
+  * Padrão Arquitetural MVC Simples (Model-View-Controller) modificado para API REST.
+  * Gerenciamento de rotas e sessões nativas por roteador unificado.
+  
+- Banco de Dados:
+  * MySQL / MariaDB utilizando a extensão PDO (PHP Data Objects).
+  * Preparação rígida de consultas (Prepared Statements) contra SQL Injection.
+
+--------------------------------------------------------------------------------
+2. ESTRUTURA DE DIRETÓRIOS E COMPONENTES
+--------------------------------------------------------------------------------
+
+A raiz do projeto é dividida em três pilares principais (Frontend, Backend, Database),
+acrescido do ecossistema de Testes:
+
+/ (Raiz do Projeto)
+│
+├── database/                    # Scripts SQL para o banco de dados
+│   └── schema.sql               # Estrutura completa de tabelas e dados padrão
+│
+├── backend/                     # Código lógico do servidor (PHP)
+│   ├── config/                  # Configurações do sistema
+│   │   └── Database.php         # Classe de conexão com o banco de dados
+│   │
+│   ├── models/                  # Classes de persistência de dados (Models)
+│   │   ├── User.php, Obra.php, Etapa.php, Financeiro.php, Material.php,
+│   │   ├── Funcionario.php, Equipe.php, Funcao.php, Documento.php, 
+│   │   └── Notificacao.php, Acidente.php, Relatorio.php, Dashboard.php
+│   │
+│   ├── controllers/             # Classes controladoras de regras e requisições (Controllers)
+│   │   ├── UserController.php, ObraController.php, EtapaController.php,
+│   │   └── [Demais controladores correspondentes aos modelos...]
+│   │
+│   ├── index.php                # Roteador centralizado da API e middleware
+│   └── migrations.php           # Utilitário de migração de colunas e dados locais
+│
+├── frontend/                    # Interface de usuário (HTML/CSS/JS)
+│   ├── css/                     # Folhas de estilo da aplicação (style.css)
+│   ├── js/                      # Arquivos lógicos que consomem a API (Fetch)
+│   │   ├── api.js               # Classe base e tratamento global de requisições
+│   │   ├── auth.js              # Controle de login, logout e sessões
+│   │   └── [Arquivos JS específicos para cada tela/módulo...]
+│   │
+│   ├── index.html               # Tela de Login (Página Principal)
+│   └── pages/                   # Módulos administrativos internos
+│       ├── dashboard.html       # Painel de controle e indicadores
+│       ├── obras.html           # Gestão de projetos de obras
+│       ├── etapas.html          # Controle de fases das obras
+│       ├── financeiro.html      # Fluxo de caixa (Orçamentos e Despesas)
+│       ├── materiais.html       # Estoque (Entradas e Saídas)
+│       ├── funcionarios.html    # Recursos humanos e contratação
+│       ├── funcoes.html         # Funções organizacionais de cargos
+│       ├── equipes.html         # Gestão de equipes de trabalho
+│       ├── documentos.html      # Upload e arquivo digital
+│       ├── notificacoes.html    # Central de avisos automatizados
+│       └── relatorios.html      # Balanço e geração de relatórios
+│
+├── tests/                       # Suíte de controle de testes automatizados
+│   ├── run.php                  # Executável unificado da suíte
+│   ├── quality_analyzer.php     # Linter e varreduras de qualidade estática
+│   └── logic_test_runner.php    # Suíte unitária (PDO Mock em memória)
+│
+└── scratch/                     # Scripts utilitários temporários
+
+--------------------------------------------------------------------------------
+3. MODELAGEM DE DADOS E RELACIONAMENTOS (SGBD)
+--------------------------------------------------------------------------------
+
+O banco de dados "controle_obras" é composto pelas seguintes tabelas:
+
+1. usuarios:
+   * Guarda credenciais e preferências.
+   * Chave Primária: id (Auto-incremento).
+   * Níveis de acesso: 'Administrador', 'RH', 'Financeiro', 'Almoxarifado', 
+     'Engenharia', 'Visualização'.
+
+2. obras:
+   * Representa os empreendimentos geridos.
+   * Chaves Estrangeiras: equipe_id (liga com equipes).
+
+3. etapas:
+   * Fases individuais de uma obra (ex: Fundação, Alvenaria).
+   * Chaves Estrangeiras: obra_id (cascade delete), equipe_id, responsavel_id 
+     (funcionários).
+
+4. financeiro:
+   * Movimentações monetárias (tipo: 'orcamento' ou 'despesa').
+   * Chaves Estrangeiras: obra_id (cascade delete).
+
+5. materiais:
+   * Controle físico do almoxarifado (tipo: 'entrada' ou 'saida').
+   * Chaves Estrangeiras: obra_id (cascade delete).
+
+6. funcionarios:
+   * Ficha de colaboradores da empresa.
+   * Chaves Estrangeiras: funcao_id, equipe_id.
+
+7. funcoes & equipes:
+   * Organização operacional de cargos e grupos de trabalho.
+
+8. documentos:
+   * Arquivos anexados às obras.
+   * Chaves Estrangeiras: obra_id (cascade delete).
+
+9. notificacoes:
+   * Alertas gerados pelo sistema para os usuários.
+   * Chaves Estrangeiras: usuario_id (cascade delete).
+
+10. acidentes_historico:
+    * Armazena dados de segurança do trabalho e estatísticas de incidentes.
+
+--------------------------------------------------------------------------------
+4. DIRETRIZES DE SEGURANÇA IMPLEMENTADAS
+--------------------------------------------------------------------------------
+
+- Criptografia de Credenciais:
+  Armazenamento de senhas utilizando hash Bcrypt por meio da função nativa do 
+  PHP `password_hash($senha, PASSWORD_BCRYPT)`. A validação é feita com a 
+  função correspondente `password_verify()`.
+
+- Prevenção contra Injeção de SQL (SQL Injection):
+  Todas as queries de banco de dados nos modelos utilizam estritamente o PDO com
+  Prepared Statements (`$stmt->prepare()`), vinculando parâmetros via 
+  `$stmt->bindParam()` ou `$stmt->bindValue()`.
+
+- Segurança no Upload de Documentos (Prevenção contra RCE):
+  O controlador `DocumentoController.php` protege o servidor de upload por meio
+  de três barreiras de verificação:
+  1. Limite físico de tamanho máximo de 5MB por arquivo.
+  2. Validação rigorosa de assinatura binária (MIME Type real) usando a 
+     extensão nativa `finfo_file` para assegurar que extensões não correspondam
+     a scripts maliciosos disfarçados.
+  3. Whitelist estrita de extensões permitidas ('pdf', 'jpg', 'jpeg', 'png',
+     'doc', 'docx'), impossibilitando o envio de arquivos `.php` executáveis.
+
+- Middleware de Roteamento e Permissão:
+  O arquivo `backend/index.php` intercepta e filtra todas as requisições de API:
+  * Exige autenticação prévia conferindo `$_SESSION['user_id']`.
+  * Filtra permissões de rotas com base em `$_SESSION['user_nivel']`. Perfis
+    são restritos exclusivamente a seus escopos de trabalho (ex: Almoxarifado 
+    não altera o financeiro; Visualização tem bloqueio absoluto a requisições
+    que não sejam do método GET).
+
+--------------------------------------------------------------------------------
+5. SUÍTE DE TESTES AUTOMATIZADOS
+--------------------------------------------------------------------------------
+
+Desenvolvemos uma arquitetura de testes robusta sob medida para o projeto:
+
+- Linter Estático (`quality_analyzer.php`):
+  Varre recursivamente todo o código buscando erros de sintaxe, formatações de
+  segurança incorretas, validação estrutural HTML5 semântica e checagem de IDs
+  exclusivos para testes de interface.
+
+- Motor de Lógica Virtual (`logic_test_runner.php`):
+  Implementa um emulador em memória (Mock PDO) que simula o comportamento de
+  consultas ao banco de dados MySQL diretamente em vetores nativos do PHP.
+  Isso executa a lógica e os modelos originais do ERP com velocidade, sem
+  precisar de drivers ou infraestrutura instalada na CLI local (isolamento total).
+
+- Ponto de Entrada (`run.php`):
+  Unifica a execução de todos os testes estáticos e lógicos em um único
+  comando (`php tests/run.php`), fornecendo análises claras no terminal e logs.
+================================================================================

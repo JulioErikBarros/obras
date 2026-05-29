@@ -1,0 +1,863 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    --bg-color: #f8fafc;
+    --text-color: #0f172a;
+    --text-muted: #64748b;
+    --card-bg: #ffffff;
+    --sidebar-bg: #0f172a;
+    --sidebar-text: #94a3b8;
+    --sidebar-hover-bg: #1e293b;
+    --sidebar-hover-text: #f8fafc;
+    --sidebar-active-bg: #2563eb;
+    --sidebar-active-text: #ffffff;
+    --table-bg: #ffffff;
+    --table-text: #0f172a;
+    --table-hover-bg: #f1f5f9;
+    --input-bg: #ffffff;
+    --input-text: #0f172a;
+    --border-color: #e2e8f0;
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --accent-color: #f59e0b; /* Golden Safety accent */
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --info-color: #06b6d4;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --transition-speed: 0.25s;
+}
+
+[data-theme="escuro"] {
+    --bg-color: #0b0f19;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --card-bg: #111827;
+    --sidebar-bg: #030712;
+    --sidebar-text: #94a3b8;
+    --sidebar-hover-bg: #111827;
+    --sidebar-hover-text: #f8fafc;
+    --sidebar-active-bg: #3b82f6;
+    --sidebar-active-text: #ffffff;
+    --table-bg: #111827;
+    --table-text: #f8fafc;
+    --table-hover-bg: #1f2937;
+    --input-bg: #1f2937;
+    --input-text: #f8fafc;
+    --border-color: #1f2937;
+    --primary-color: #3b82f6;
+    --primary-hover: #60a5fa;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+}
+
+/* Reset & Global */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    overflow-x: hidden;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Acessibilidade */
+*:focus-visible {
+    outline: 3px solid var(--accent-color) !important;
+    outline-offset: 2px;
+}
+*:focus {
+    outline: none;
+}
+
+/* Layout Wrapper */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+/* Sidebar Modernizada */
+.sidebar {
+    min-width: 260px;
+    max-width: 260px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebar .sidebar-header {
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar .sidebar-header h4 {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar .sidebar-header small {
+    display: block;
+    margin-top: 6px;
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.sidebar ul.components {
+    padding: 16px 0;
+    margin: 0;
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sidebar ul li {
+    position: relative;
+    margin: 4px 12px;
+}
+
+.sidebar ul li a {
+    padding: 12px 16px;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.sidebar ul li a i {
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.sidebar ul li a:hover {
+    color: var(--sidebar-hover-text);
+    background: var(--sidebar-hover-bg);
+}
+
+.sidebar ul li a:hover i {
+    transform: scale(1.1);
+}
+
+.sidebar ul li.active > a {
+    background: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.sidebar ul li.active > a i {
+    color: #ffffff;
+}
+
+.sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Botão Tema */
+.theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--accent-color);
+    transform: rotate(15deg) scale(1.05);
+}
+
+/* Conteúdo Principal */
+.main-content {
+    width: 100%;
+    padding: 32px;
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content h2 {
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Cards ERP/SaaS */
+.card, .modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    margin-bottom: 24px;
+    transition: transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1), box-shadow var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Dashboard Cards */
+.card-dashboard {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-dashboard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary-color);
+}
+
+.card-dashboard.border-success::before { background: var(--success-color); }
+.card-dashboard.border-danger::before { background: var(--danger-color); }
+.card-dashboard.border-info::before { background: var(--info-color); }
+.card-dashboard.border-warning::before { background: var(--accent-color); }
+
+.card-dashboard .card-title {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.card-dashboard .card-text {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+}
+
+/* Card Segurança "Dias Sem Acidente" */
+.card-safety {
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border-left: 4px solid var(--success-color) !important;
+}
+
+.card-safety .safety-icon {
+    position: absolute;
+    bottom: -15px;
+    right: -10px;
+    font-size: 5rem;
+    opacity: 0.12;
+    transform: rotate(-15deg);
+    color: var(--success-color);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.card-safety:hover .safety-icon {
+    transform: rotate(0deg) scale(1.1);
+    opacity: 0.2;
+}
+
+/* Botões Modernos */
+.btn {
+    border-radius: var(--radius-md);
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-secondary {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--table-hover-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Tabelas Premium */
+.table-responsive {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    background-color: var(--table-bg);
+    margin-bottom: 24px;
+}
+
+.table {
+    color: var(--table-text) !important;
+    background-color: var(--table-bg) !important;
+    margin-bottom: 0 !important;
+    border-collapse: collapse;
+}
+
+.table th {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    color: var(--text-muted) !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 16px 20px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.table td {
+    padding: 16px 20px !important;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.table-hover tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--table-hover-bg) !important;
+}
+
+/* Formulários Modernos */
+.form-control, .form-select {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+}
+
+/* Validação Visual */
+.required-label::after {
+    content: " *";
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+.was-validated .form-control:invalid, .was-validated .form-select:invalid {
+    border-color: var(--danger-color);
+}
+
+.was-validated .form-control:invalid:focus, .was-validated .form-select:invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Botão Flutuante de Acidentes (Modo Compacto de Segurança) */
+.floating-accident-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--success-color);
+    color: #fff;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+    border: 2px solid #ffffff;
+}
+
+.floating-accident-btn:hover {
+    transform: scale(1.1) translateY(-2px);
+    background: #059669;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+}
+
+/* Modais Modernizados */
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 24px;
+}
+
+.modal-header .modal-title {
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 16px 24px;
+}
+
+/* Modais Animações */
+.modal.fade .modal-dialog {
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+/* Notificações Premium */
+.list-group-item {
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    margin-bottom: 12px;
+    border-radius: var(--radius-md) !important;
+    padding: 18px 24px;
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+/* Modificadores de notificação por tipo */
+.list-group-item-info {
+    border-left: 4px solid var(--info-color) !important;
+    background-color: rgba(6, 182, 212, 0.03) !important;
+}
+.list-group-item-danger {
+    border-left: 4px solid var(--danger-color) !important;
+    background-color: rgba(239, 68, 68, 0.03) !important;
+}
+.list-group-item-warning {
+    border-left: 4px solid var(--accent-color) !important;
+    background-color: rgba(245, 158, 11, 0.03) !important;
+}
+.list-group-item-success {
+    border-left: 4px solid var(--success-color) !important;
+    background-color: rgba(16, 185, 129, 0.03) !important;
+}
+.list-group-item-secondary {
+    border-left: 4px solid var(--text-muted) !important;
+    background-color: rgba(100, 116, 139, 0.03) !important;
+}
+
+.opacity-50 {
+    opacity: 0.65 !important;
+}
+
+/* Badge de Notificações */
+.badge.bg-danger {
+    background-color: var(--danger-color) !important;
+    font-weight: 700;
+}
+
+.sidebarNotifBadgePulse {
+    animation: pulse 1.8s infinite;
+}
+
+/* Global Loader Style */
+#globalLoader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 15, 25, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.spinner-border {
+    width: 3.5rem;
+    height: 3.5rem;
+    color: var(--primary-color) !important;
+    border-width: 0.3em;
+}
+
+.hide-no-permission {
+    display: none !important;
+}
+
+/* Hambúrguer botão */
+.toggle-sidebar-btn {
+    display: none;
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+}
+
+/* Login Page Custom Style */
+.login-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-body::before {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+    top: -100px;
+    right: -100px;
+}
+
+.login-body::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+    bottom: -100px;
+    left: -100px;
+}
+
+.login-card {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--border-color);
+    z-index: 10;
+    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-card h3 {
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.login-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+/* Responsividade Mobile/Tablet */
+@media (max-width: 992px) {
+    .sidebar {
+        margin-left: -260px;
+        position: fixed;
+        height: 100vh;
+        z-index: 1040;
+    }
+    
+    .sidebar.active {
+        margin-left: 0;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .main-content {
+        padding: 20px;
+    }
+    
+    .toggle-sidebar-btn {
+        display: inline-flex !important;
+        margin-right: 12px;
+    }
+
+    /* Grids adaptáveis */
+    .col-md-4, .col-md-6 {
+        margin-top: 12px;
+    }
+}
+
+/* Overlay do Sidebar no mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(11, 15, 25, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 99;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* ==========================================================================
+   PADRONIZAÇÃO VISUAL AUTOMÁTICA (TEXT-TRANSFORM UPPERCASE)
+   ========================================================================== */
+
+/* 1. Labels e Textos de Formulários */
+label,
+.form-label,
+.required-label,
+.label-uppercase {
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+}
+
+/* 2. Cabeçalhos de Tabelas */
+th,
+.table th {
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+}
+
+/* 3. Badges, Status e Tags */
+.badge,
+.badge-uppercase {
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+}
+
+/* 4. Títulos de Cards, Modais e KPIs */
+.card-title,
+.card h5,
+.modal-title,
+.card-dashboard .card-title {
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+}
+
+/* 5. Sidebar e Menus */
+.sidebar .sidebar-header h4,
+.sidebar ul li a,
+.sidebar-footer,
+.sidebar-footer button {
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+}
+
+/* 6. Botões */
+.btn,
+button:not(.btn-close) {
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+}
+
+/* 7. Títulos Principais e Administrativos */
+.main-content h2,
+.main-content h3,
+.main-content h5,
+.main-content h6,
+.timbrado-title,
+.timbrado-meta strong,
+.timbrado-signature strong {
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+}
+
+/* 8. Notificações */
+.list-group-item h5,
+.list-group-item strong,
+.list-group-item .badge {
+    text-transform: uppercase !important;
+}
+
+/* 9. Dados Dinâmicos das Tabelas por Padrão */
+.table td,
+.text-uppercase-system {
+    text-transform: uppercase;
+}
+
+/* 10. Isenções de Maiúsculas (Emails, Passwords, URLs, Descrições, etc.) */
+.no-uppercase,
+.no-uppercase *,
+.table td.no-uppercase,
+.table td.no-uppercase *,
+input.form-control,
+select.form-select,
+textarea.form-control,
+input[type="email"],
+input[type="password"] {
+    text-transform: none !important;
+}
+
+/* ==========================================================================
+   BOTÕES DE AÇÃO PREMIUM (EDITAR, EXCLUIR, VISUALIZAR, DEMITIR)
+   ========================================================================== */
+.btn-action {
+    width: 32px;
+    height: 32px;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    border: 1px solid transparent !important;
+    margin: 0 2px;
+    cursor: pointer;
+}
+
+/* 1. Botão de Editar (Azul/Primary) */
+.btn-action-edit {
+    background-color: rgba(37, 99, 235, 0.08) !important;
+    color: var(--primary-color) !important;
+}
+.btn-action-edit:hover {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.25);
+}
+
+/* 2. Botão de Excluir (Vermelho/Danger) */
+.btn-action-delete {
+    background-color: rgba(239, 68, 68, 0.08) !important;
+    color: var(--danger-color) !important;
+}
+.btn-action-delete:hover {
+    background-color: var(--danger-color) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.25);
+}
+
+/* 3. Botão de Visualizar (Verde/Success) */
+.btn-action-view {
+    background-color: rgba(16, 185, 129, 0.08) !important;
+    color: var(--success-color) !important;
+}
+.btn-action-view:hover {
+    background-color: var(--success-color) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.25);
+}
+
+/* 4. Botão de Demitir (Laranja/Warning/Accent) */
+.btn-action-demitir {
+    background-color: rgba(245, 158, 11, 0.08) !important;
+    color: var(--accent-color) !important;
+}
+.btn-action-demitir:hover {
+    background-color: var(--accent-color) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.25);
+}
+
+/* ==========================================================================
+   GLOBAL PRINT RULES (HIDE VLIBRAS AND OTHER INTERACTIVE WIDGETS)
+   ========================================================================== */
+@media print {
+    [vw],
+    [vw-access-button],
+    .vw-plugin-wrapper,
+    iframe,
+    #globalLoader {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+}
+
+

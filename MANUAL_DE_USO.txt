@@ -1,0 +1,157 @@
+================================================================================
+           MANUAL DE INSTALAÇÃO E USO DO SISTEMA: ERP CONTROLE DE OBRAS
+================================================================================
+
+Este manual orienta você no processo de configuração, inicialização e uso
+administrativo de todos os módulos do ERP Controle de Obras.
+
+--------------------------------------------------------------------------------
+1. COMO CONFIGURAR E INICIAR O PROJETO LOCALMENTE
+--------------------------------------------------------------------------------
+
+Siga os passos abaixo para colocar o sistema em execução em seu ambiente local:
+
+### Pré-requisitos:
+- Servidor local rodando PHP 8.0 ou superior (ex: XAMPP, WampServer, Laragon).
+- Banco de dados MySQL ou MariaDB.
+
+### Passo 1: Configurar o Banco de Dados
+1. Certifique-se de que o MySQL está em execução.
+2. Abra o console ou ferramenta de administração (ex: phpMyAdmin) e importe o
+   arquivo de banco localizado em:
+   `database/schema.sql`
+   
+   (Se preferir usar a linha de comando):
+   mysql -u seu_usuario -p < database/schema.sql
+   
+   *Este comando criará automaticamente o banco `controle_obras`, todas as
+   tabelas necessárias e registrará o usuário administrador padrão.*
+
+### Passo 2: Atualizar Credenciais de Acesso ao Banco
+Se o seu banco de dados local utiliza credenciais específicas (usuário ou senha),
+atualize-as no seguinte arquivo:
+`backend/config/Database.php`
+
+Edite as linhas:
+  private $host = "localhost";
+  private $db_name = "controle_obras";
+  private $username = "seu_usuario";      // Padrão geralmente é 'root'
+  private $password = "sua_senha";        // Padrão geralmente é vazio ''
+
+### Passo 3: Iniciar o Servidor Web do PHP
+Você pode usar o servidor web embutido do PHP para rodar a aplicação rapidamente.
+1. Abra um terminal de comando (PowerShell ou CMD) na pasta raiz do projeto.
+2. Execute o comando:
+   php -S localhost:8000
+   
+3. Mantenha o terminal aberto.
+
+### Passo 4: Acessar o ERP no Navegador
+Abra o seu navegador web (Chrome, Edge, Firefox, etc.) e acesse o endereço:
+http://localhost:8000/frontend/index.html
+
+--------------------------------------------------------------------------------
+2. CREDENCIAIS DE ACESSO PADRÃO (PRIMEIRO LOGIN)
+--------------------------------------------------------------------------------
+
+Para entrar no sistema pela primeira vez, utilize a conta administrativa padrão:
+
+- E-mail: admin@admin.com
+- Senha: password
+
+Após entrar, você pode alterar sua senha ou cadastrar novos usuários no módulo
+de Usuários.
+
+--------------------------------------------------------------------------------
+3. GUIA DE USO DOS MÓDULOS DO SISTEMA
+--------------------------------------------------------------------------------
+
+O sistema conta com 9 módulos administrativos principais acessados pela barra
+lateral (Sidebar):
+
+1. DASHBOARD (Painel Geral)
+   - Fornece uma visão consolidada e imediata do sistema.
+   - Exibe a quantidade de obras ativas (em planejamento ou andamento), 
+     o somatório financeiro das despesas pagas e gráficos dinâmicos de progresso.
+   - Apresenta o indicador de "Dias sem Acidentes de Trabalho" para incentivar
+     a segurança nas obras.
+
+2. OBRAS (Gestão de Empreendimentos)
+   - Permite cadastrar novos projetos definindo nome, tipo (Casa, Apartamento,
+     Reforma, Galpão, etc.), datas de início e previsão de término, endereço,
+     responsável técnico e a equipe encarregada.
+   - A barra de progresso da obra e o seu status (Em andamento/Concluída) são
+     sincronizados e calculados de forma 100% automática com base nas etapas.
+
+3. ETAPAS (Cronograma de Atividades)
+   - Permite detalhar o cronograma da obra cadastrando fases individuais (ex:
+     Fundação, Alvenaria, Elétrica, Pintura).
+   - Ao alterar o status de uma etapa para "Concluída", o progresso dela vai para
+     100%. De igual forma, digitar 100% altera o status para "Concluída" de
+     forma automática.
+   - Quando uma etapa avança, ela altera o progresso geral da Obra vinculada.
+
+4. FINANCEIRO (Fluxo de Caixa)
+   - Registre todas as entradas ("Orcamento") e saídas ("Despesa") financeiras.
+   - Controle as contas com os status de pagamento: "Pendente", "Pago",
+     "Recebido" e "Cancelado".
+   - Útil para manter a saúde financeira de cada canteiro de obras.
+
+5. MATERIAIS (Almoxarifado e Estoque)
+   - Registre a entrada (compra/recebimento) e saída (consumo) de insumos (cimento,
+     tijolo, fios, EPIs).
+   - **Regra de Segurança Física**: O sistema bloqueia de forma inteligente
+     qualquer registro de saída de material que seja superior ao saldo disponível
+     (Total de Entradas - Total de Saídas), prevenindo furos no estoque.
+
+6. RECURSOS HUMANOS (Funcionários, Equipes e Funções)
+   - Módulo integrado para contratação e alocação de trabalhadores.
+   - **Funções**: Cadastre funções definindo salários-base e escalas de trabalho.
+   - **Equipes**: Monte equipes e vincule um responsável técnico a elas.
+   - **Funcionários**: Registre a admissão de novos trabalhadores.
+   - **Demissão Responsável**: No fluxo de desligamento, o sistema exige a data
+     e o motivo detalhado do desligamento antes de inativar o registro.
+
+7. GESTÃO DE DOCUMENTOS (Arquivo Digital)
+   - Faça uploads de arquivos relevantes associados a cada obra (plantas,
+     contratos, notas fiscais, fotos) nos formatos PDF, Word (DOC/DOCX) ou Imagens.
+   - O sistema valida rigorosamente arquivos com mais de 5MB ou formatos inseguros
+     para manter o servidor livre de vírus ou códigos maliciosos.
+
+8. RELATÓRIOS (Balanços e Exportação)
+   - Extraia relatórios detalhados baseados em filtros por Obra e Períodos.
+   - **Financeiro**: Balanço detalhado de pagamentos e despesas a vencer.
+   - **Materiais**: Comparativo de entradas e saídas de materiais consolidados.
+   - Todos os relatórios podem ser formatados para impressão em PDF nativo.
+
+9. NOTIFICAÇÕES (Alertas Automatizados)
+   - Central de monitoramento em tempo real. Notifica saídas de materiais, atrasos
+     ou atualizações importantes.
+   - A página recarrega de forma silenciosa e automática a cada 30 segundos
+     mantendo os alertas sempre atualizados.
+
+- CONFIGURAÇÕES DE TEMA (Modo Escuro / Modo Claro)
+  O sistema conta com transição rápida de tema (Dark Mode/Light Mode) com base na
+  preferência de cada usuário. Suas preferências são salvas no banco de dados e
+  restauradas automaticamente em qualquer dispositivo após o login.
+
+--------------------------------------------------------------------------------
+4. COMO EXECUTAR OS TESTES AUTOMATIZADOS
+--------------------------------------------------------------------------------
+
+Se você é um desenvolvedor ou deseja realizar auditorias de qualidade de código
+e integridade de dados do ERP, execute a suíte de testes:
+
+1. Abra o terminal (PowerShell ou prompt de comando) na pasta raiz do projeto.
+2. Digite o comando de execução:
+   php tests/run.php
+   
+3. Os testes rodarão instantaneamente e retornarão a avaliação de:
+   - Sintaxe PHP de todos os arquivos.
+   - Segurança de upload e proteção contra SQL Injection.
+   - Semântica e acessibilidade das telas do frontend.
+   - 20 testes lógicos com banco de dados em memória.
+   
+4. Um relatório consolidado em formato JSON também será salvo automaticamente
+   em `tests/relatorio_testes.json`.
+================================================================================

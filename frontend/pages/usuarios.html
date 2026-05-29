@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários - Caba Desenrolado ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="bi bi-building-gear text-primary"></i> Caba Desenrolado ERP</h4>
+            
+        </div>
+        <ul class="list-unstyled components">
+            <li class=""><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li data-access="Engenharia" class=""><a href="obras.html"><i class="bi bi-building"></i> Obras</a></li>
+            <li data-access="Engenharia" class=""><a href="etapas.html"><i class="bi bi-list-task"></i> Etapas</a></li>
+            <li data-access="Financeiro" class=""><a href="financeiro.html"><i class="bi bi-cash-coin"></i> Financeiro</a></li>
+            <li data-access="Almoxarifado" class=""><a href="materiais.html"><i class="bi bi-box-seam"></i> Materiais</a></li>
+            <li data-access="RH" class=""><a href="funcionarios.html"><i class="bi bi-people"></i> Funcionários</a></li>
+            <li data-access="RH" class=""><a href="funcoes.html"><i class="bi bi-briefcase"></i> Funções e Cargos</a></li>
+            <li data-access="Engenharia,RH" class=""><a href="equipes.html"><i class="bi bi-person-workspace"></i> Equipes</a></li>
+            <li data-access="Engenharia" class=""><a href="documentos.html"><i class="bi bi-file-earmark-text"></i> Documentos</a></li>
+                        <li data-access="Financeiro,Almoxarifado,RH" class=""><a href="relatorios.html"><i class="bi bi-graph-up"></i> Relatórios</a></li>
+            <li class="">
+                <a href="notificacoes.html" class="d-flex justify-content-between align-items-center w-100">
+                    <span><i class="bi bi-bell"></i> Notificações</span>
+                    <span id="sidebarNotifBadge" class="badge bg-danger ms-2 d-none sidebarNotifBadgePulse">0</span>
+                </a>
+            </li>
+            <li data-access="Administrador" class="active"><a href="usuarios.html"><i class="bi bi-shield-lock"></i> Usuários</a></li>
+            <li><a href="#" onclick="auth.logout()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="theme-toggle-btn" onclick="auth.toggleTheme()" title="Alternar Tema (Claro/Escuro)"><i class="bi bi-brightness-high"></i></button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <button class="btn btn-secondary d-lg-none toggle-sidebar-btn" id="toggleSidebarBtn"><i class="bi bi-list"></i></button>
+                <i class="bi bi-shield-lock text-primary d-none d-sm-inline-block"></i> Gestão de Usuários
+            </h2>
+            <button class="btn btn-primary" onclick="openUsuarioModal()"><i class="bi bi-person-lock"></i> Novo Usuário</button>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Nível</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="usuariosTableBody">
+                    <!-- Dinâmico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Usuário -->
+<div class="modal fade" id="usuarioModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="usuarioModalTitle"><i class="bi bi-person-fill-lock text-primary"></i> Novo Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate id="usuarioForm" class="row g-3">
+                    <input type="hidden" id="userId">
+                    <div class="col-12">
+                        <label for="userNome" class="form-label required-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="userNome" required placeholder="Ex: Carlos Oliveira">
+                    </div>
+                    <div class="col-12">
+                        <label for="userEmail" class="form-label required-label">E-mail de Acesso</label>
+                        <input type="email" class="form-control" id="userEmail" required placeholder="Ex: carlos@empresa.com">
+                    </div>
+                    <div class="col-12">
+                        <label for="userSenha" class="form-label">Senha de Acesso</label>
+                        <input type="password" class="form-control" id="userSenha" placeholder="Digite uma senha forte ou em branco para não alterar">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="userNivel" class="form-label">Nível de Acesso</label>
+                        <select class="form-select" id="userNivel" required>
+                            <option value="Administrador">Administrador</option>
+                            <option value="RH">RH</option>
+                            <option value="Financeiro">Financeiro</option>
+                            <option value="Almoxarifado">Almoxarifado</option>
+                            <option value="Engenharia">Engenharia</option>
+                            <option value="Visualização">Visualização</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6" id="divStatus" style="display:none;">
+                        <label for="userStatus" class="form-label">Status</label>
+                        <select class="form-select" id="userStatus">
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save"></i> Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/usuarios.js"></script>
+<script>auth.checkAuth();</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcionários - Caba Desenrolado ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="bi bi-building-gear text-primary"></i> Caba Desenrolado ERP</h4>
+            
+        </div>
+        <ul class="list-unstyled components">
+            <li class=""><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li data-access="Engenharia" class=""><a href="obras.html"><i class="bi bi-building"></i> Obras</a></li>
+            <li data-access="Engenharia" class=""><a href="etapas.html"><i class="bi bi-list-task"></i> Etapas</a></li>
+            <li data-access="Financeiro" class=""><a href="financeiro.html"><i class="bi bi-cash-coin"></i> Financeiro</a></li>
+            <li data-access="Almoxarifado" class=""><a href="materiais.html"><i class="bi bi-box-seam"></i> Materiais</a></li>
+            <li data-access="RH" class="active"><a href="funcionarios.html"><i class="bi bi-people"></i> Funcionários</a></li>
+            <li data-access="RH" class=""><a href="funcoes.html"><i class="bi bi-briefcase"></i> Funções e Cargos</a></li>
+            <li data-access="Engenharia,RH" class=""><a href="equipes.html"><i class="bi bi-person-workspace"></i> Equipes</a></li>
+            <li data-access="Engenharia" class=""><a href="documentos.html"><i class="bi bi-file-earmark-text"></i> Documentos</a></li>
+                        <li data-access="Financeiro,Almoxarifado,RH" class=""><a href="relatorios.html"><i class="bi bi-graph-up"></i> Relatórios</a></li>
+            <li class="">
+                <a href="notificacoes.html" class="d-flex justify-content-between align-items-center w-100">
+                    <span><i class="bi bi-bell"></i> Notificações</span>
+                    <span id="sidebarNotifBadge" class="badge bg-danger ms-2 d-none sidebarNotifBadgePulse">0</span>
+                </a>
+            </li>
+            <li data-access="Administrador" class=""><a href="usuarios.html"><i class="bi bi-shield-lock"></i> Usuários</a></li>
+            <li><a href="#" onclick="auth.logout()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="theme-toggle-btn" onclick="auth.toggleTheme()" title="Alternar Tema (Claro/Escuro)"><i class="bi bi-brightness-high"></i></button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <button class="btn btn-secondary d-lg-none toggle-sidebar-btn" id="toggleSidebarBtn"><i class="bi bi-list"></i></button>
+                <i class="bi bi-people text-primary d-none d-sm-inline-block"></i> Gestão de Funcionários
+            </h2>
+            <button class="btn btn-primary" onclick="openFuncionarioModal()"><i class="bi bi-person-plus"></i> Novo Funcionário</button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card p-4 mb-4">
+            <form novalidate id="filtroFuncionariosForm" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="filtroBusca" class="form-label">Busca por Nome</label>
+                    <input type="text" class="form-control" id="filtroBusca" placeholder="Nome do funcionário...">
+                </div>
+                <div class="col-md-2">
+                    <label for="filtroStatusFunc" class="form-label">Status</label>
+                    <select class="form-select" id="filtroStatusFunc">
+                        <option value="">Todos</option>
+                        <option value="ativo">Ativos</option>
+                        <option value="afastado">Afastados</option>
+                        <option value="demitido">Demitidos</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="filtroEquipe" class="form-label">Equipe</label>
+                    <input type="text" class="form-control" id="filtroEquipe" placeholder="Buscar por equipe">
+                </div>
+                <div class="col-md-2">
+                    <label for="filtroFuncao" class="form-label">Função</label>
+                    <input type="text" class="form-control" id="filtroFuncao" placeholder="Buscar por função">
+                </div>
+                <div class="col-md-2">
+                    <label for="filtroDataAdmissao" class="form-label">Data Contratação</label>
+                    <input type="date" class="form-control" id="filtroDataAdmissao">
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-secondary w-100" title="Filtrar"><i class="bi bi-funnel"></i></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Função</th>
+                        <th>Equipe</th>
+                        <th>Admissão</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="funcionariosTableBody">
+                    <!-- Dinâmico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Funcionario -->
+<div class="modal fade" id="funcionarioModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="funcionarioModalTitle"><i class="bi bi-person-add text-primary"></i> Novo Funcionário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate id="funcionarioForm" class="row g-3">
+                    <input type="hidden" id="funcId">
+                    <div class="col-12">
+                        <label for="funcNome" class="form-label required-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="funcNome" required placeholder="Ex: João da Silva">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="funcFuncaoId" class="form-label required-label">Função Pré-cadastrada</label>
+                        <select class="form-select" id="funcFuncaoId" required>
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="funcEquipeId" class="form-label">Equipe Pré-cadastrada</label>
+                        <select class="form-select" id="funcEquipeId">
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="funcAdmissao" class="form-label">Data de Admissão</label>
+                        <input type="date" class="form-control" id="funcAdmissao">
+                    </div>
+                    <div class="col-12" id="divFuncStatus" style="display:none;">
+                        <label for="funcStatus" class="form-label">Status</label>
+                        <select class="form-select" id="funcStatus">
+                            <option value="ativo">Ativo</option>
+                            <option value="afastado">Afastado</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save"></i> Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Demissão -->
+<div class="modal fade" id="demissaoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><i class="bi bi-person-dash"></i> Desligar Funcionário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="demissaoForm" novalidate class="row g-3">
+                    <input type="hidden" id="demFuncId">
+                    <div class="col-12">
+                        <div class="alert alert-warning d-flex align-items-start gap-2 mb-0">
+                            <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+                            <div>
+                                <strong>Atenção:</strong> Ao demitir o funcionário <strong id="demFuncNome"></strong>, ele não estará mais disponível para alocação em novas equipes ou obras.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label for="demData" class="form-label required-label">Data de Demissão</label>
+                        <input type="date" class="form-control" id="demData" required>
+                        <div class="invalid-feedback">Informe a data de demissão.</div>
+                    </div>
+                    <div class="col-12">
+                        <label for="demMotivo" class="form-label required-label">Motivo da Demissão</label>
+                        <textarea class="form-control" id="demMotivo" rows="3" required placeholder="Descreva sucintamente o motivo do desligamento..."></textarea>
+                        <div class="invalid-feedback">Informe o motivo da demissão.</div>
+                    </div>
+                    <div class="col-12 text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger px-4">Confirmar Demissão</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/funcionarios.js"></script>
+<script>auth.checkAuth();</script>
+</body>
+</html>

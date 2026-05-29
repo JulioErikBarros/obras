@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funções e Cargos - Caba Desenrolado ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="bi bi-building-gear text-primary"></i> Caba Desenrolado ERP</h4>
+            
+        </div>
+        <ul class="list-unstyled components">
+            <li class=""><a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li data-access="Engenharia" class=""><a href="obras.html"><i class="bi bi-building"></i> Obras</a></li>
+            <li data-access="Engenharia" class=""><a href="etapas.html"><i class="bi bi-list-task"></i> Etapas</a></li>
+            <li data-access="Financeiro" class=""><a href="financeiro.html"><i class="bi bi-cash-coin"></i> Financeiro</a></li>
+            <li data-access="Almoxarifado" class=""><a href="materiais.html"><i class="bi bi-box-seam"></i> Materiais</a></li>
+            <li data-access="RH" class=""><a href="funcionarios.html"><i class="bi bi-people"></i> Funcionários</a></li>
+            <li data-access="RH" class="active"><a href="funcoes.html"><i class="bi bi-briefcase"></i> Funções e Cargos</a></li>
+            <li data-access="Engenharia,RH" class=""><a href="equipes.html"><i class="bi bi-person-workspace"></i> Equipes</a></li>
+            <li data-access="Engenharia" class=""><a href="documentos.html"><i class="bi bi-file-earmark-text"></i> Documentos</a></li>
+                        <li data-access="Financeiro,Almoxarifado,RH" class=""><a href="relatorios.html"><i class="bi bi-graph-up"></i> Relatórios</a></li>
+            <li class="">
+                <a href="notificacoes.html" class="d-flex justify-content-between align-items-center w-100">
+                    <span><i class="bi bi-bell"></i> Notificações</span>
+                    <span id="sidebarNotifBadge" class="badge bg-danger ms-2 d-none sidebarNotifBadgePulse">0</span>
+                </a>
+            </li>
+            <li data-access="Administrador" class=""><a href="usuarios.html"><i class="bi bi-shield-lock"></i> Usuários</a></li>
+            <li><a href="#" onclick="auth.logout()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <button class="theme-toggle-btn" onclick="auth.toggleTheme()" title="Alternar Tema (Claro/Escuro)"><i class="bi bi-brightness-high"></i></button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <button class="btn btn-secondary d-lg-none toggle-sidebar-btn" id="toggleSidebarBtn"><i class="bi bi-list"></i></button>
+                <i class="bi bi-briefcase text-primary d-none d-sm-inline-block"></i> Funções e Cargos
+            </h2>
+            <button class="btn btn-primary" onclick="openFuncaoModal()"><i class="bi bi-plus-lg"></i> Nova Função</button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card p-4 mb-4">
+            <form novalidate id="filtroFuncoesForm" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label for="filtroStatusFuncao" class="form-label">Status</label>
+                    <select class="form-select" id="filtroStatusFuncao">
+                        <option value="">Todos</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="filtroNomeFuncao" class="form-label">Buscar por Nome</label>
+                    <input type="text" class="form-control" id="filtroNomeFuncao" placeholder="Nome da função...">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-funnel"></i> Filtrar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Setor</th>
+                        <th>Salário Base (R$)</th>
+                        <th>Horário Padrão</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="funcoesTableBody">
+                    <!-- Dinâmico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Funções -->
+<div class="modal fade" id="funcaoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="funcaoModalTitle"><i class="bi bi-briefcase text-primary"></i> Nova Função</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form novalidate id="funcaoForm" class="row g-3">
+                    <input type="hidden" id="funId">
+                    <div class="col-12">
+                        <label for="funNome" class="form-label required-label">Nome da Função</label>
+                        <input type="text" class="form-control" id="funNome" required placeholder="Ex: Pedreiro Especialista">
+                    </div>
+                    <div class="col-12">
+                        <label for="funSetor" class="form-label">Setor</label>
+                        <input type="text" class="form-control" id="funSetor" placeholder="Ex: Engenharia / Construção Civil">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="funSalario" class="form-label">Salário Base (R$)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <input type="number" step="0.01" class="form-control" id="funSalario" value="0.00">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="funHorario" class="form-label">Horário Padrão</label>
+                        <input type="text" class="form-control" id="funHorario" placeholder="Ex: 08:00 as 17:00">
+                    </div>
+                    <div class="col-12">
+                        <label for="funPermissao" class="form-label">Permissão Sugerida do Sistema</label>
+                        <select class="form-select" id="funPermissao">
+                            <option value="">Nenhuma</option>
+                            <option value="Visualização">Visualização</option>
+                            <option value="RH">RH</option>
+                            <option value="Financeiro">Financeiro</option>
+                            <option value="Almoxarifado">Almoxarifado</option>
+                            <option value="Engenharia">Engenharia</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="funDescricao" class="form-label required-label">Descrição detalhada</label>
+                        <textarea class="form-control" id="funDescricao" rows="3" required placeholder="Escreva a descrição das responsabilidades deste cargo..."></textarea>
+                    </div>
+                    <div class="col-12" id="divFunStatus" style="display:none;">
+                        <label for="funStatus" class="form-label">Status</label>
+                        <select class="form-select" id="funStatus">
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save"></i> Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/funcoes.js"></script>
+<script>auth.checkAuth();</script>
+</body>
+</html>
